@@ -66,7 +66,7 @@ def list_sub(s, x):
     
 def autocorrelation_1(s):
     """
-    @brief:
+    @brief: autocorrelation computation by shifting signal
     @date: 2024 septembre 02
     """
     out = []
@@ -85,7 +85,7 @@ def autocorrelation_1(s):
 
 def autocorrelation_2(s):
     """
-    @brief:
+    @brief: autocorrelation computation by shifting signal and norming the product result in order to have -1 <= R(k) <= 1
     @date: 2024 septembre 03
     """
     out = []
@@ -98,7 +98,7 @@ def autocorrelation_2(s):
     
     N = len(s)
     for i in range(N):
-        out.append((1/((N-i)*(sig**2)))*list_sum_mult(list_sub(s,u), list_sub(temp_s,u)))
+        out.append((1/((N)*(sig**2)))*list_sum_mult(list_sub(s,u), list_sub(temp_s,u)))
         temp_s.pop(0)
         temp_s.append(0)
     return out
@@ -107,7 +107,7 @@ def autocorrelation_2(s):
 
 def generate_random_vector(vector_size, distribution=None):
     """
-    @brief: TO DO, account for distribution
+    @brief: generate random vector with specific noise according to the distribution argument provided to the function
     @date: 2024 August 30
     """
     temp_list = []
@@ -133,13 +133,13 @@ def generate_random_vector(vector_size, distribution=None):
 
 def _stat_test():
     """
-    @brief
+    @brief environment for statistic test and plot application
     @date: 2024 septembre 02
     """
     returnStruct_env_geoPairing = {"plt_obj": None}
     
     # Autocorrelation function comparison
-    (_, _, data) = generate_random_vector(10000, distribution="brown")
+    (_, _, data) = generate_random_vector(100, distribution="brown")
     corr_1 = autocorrelation_1(data)
     corr_2 = autocorrelation_2(data)
     fig, ax = plt.subplots(2,2)
@@ -156,7 +156,7 @@ def _stat_test():
     
 def _env_geoPairing():
     """
-    @brief:
+    @brief: environment for geopairing application
     @date: 2024 August 30
     """
     returnStruct_env_geoPairing = {"plt_obj": None}
@@ -189,7 +189,7 @@ def _env_geoPairing():
 
 def __sys_arg_env_selection(input_arg):
     """
-    @brief:
+    @brief: select correct environment to launch for application execution
     @date: 2024 August 31
     """
     input_arg = input_arg[1:] # remove main.py function call
