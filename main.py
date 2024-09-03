@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 random.seed(1)
 
+
+
 #############################
 # ERROR MESSAGES DEFINITION #
 #############################
@@ -23,7 +25,7 @@ VALID_ARGUMENT_LIST_FOR_SYS = ["main.py", "rdm", "-p", "geo", "stat", "normal", 
 
 VALID_ARGUMENT_LIST_FOR_GEOPAIRING_DISTRIBUTION_NAME = ["normal", "brown"]
 _GEOPAIRING_RANDOM_VECTOR_LEN = int(1e6)
-
+_RANDOM_WALK_NON_ZERO_DRIFT_VALUE = 0.01
 
 
 ########################################
@@ -36,12 +38,14 @@ def mean(s):
     return (out_s/len(s))
 
 
+
 def var(s):
     u = mean(s)
     out_s = 0
     for elem in s:
         out_s = out_s + ((u-elem)**2)
     return ((1/len(s))*out_s)
+
 
 
 def dev(s):
@@ -83,9 +87,11 @@ def autocorrelation_1(s):
     return out
 
 
+
 def autocorrelation_2(s):
     """
     @brief: autocorrelation computation by shifting signal and norming the product result in order to have -1 <= R(k) <= 1
+    @comment: not appropriate for Inertial Measurement Unit (IMU) angle random walk extraction 
     @date: 2024 septembre 03
     """
     out = []
@@ -120,7 +126,7 @@ def generate_random_vector(vector_size, distribution=None):
                 temp_list.append(-1 if random.random() < 0.5 else 1)
                 for i in range(1, vector_size):
                     mov = -1 if random.random() < 0.5 else 1
-                    val = temp_list[i-1] + mov
+                    val = temp_list[i-1] + mov + _RANDOM_WALK_NON_ZERO_DRIFT_VALUE
                     temp_list.append(val)
             case _:
                 pass
@@ -131,7 +137,7 @@ def generate_random_vector(vector_size, distribution=None):
 
 
 
-def _stat_test():
+def _env_stat():
     """
     @brief environment for statistic test and plot application
     @date: 2024 septembre 02
@@ -139,7 +145,7 @@ def _stat_test():
     returnStruct_env_geoPairing = {"plt_obj": None}
     
     # Autocorrelation function comparison
-    (_, _, data) = generate_random_vector(100, distribution="brown")
+    (_, _, data) = generate_random_vector(5000, distribution="brown")
     corr_1 = autocorrelation_1(data)
     corr_2 = autocorrelation_2(data)
     fig, ax = plt.subplots(2,2)
@@ -198,7 +204,7 @@ def __sys_arg_env_selection(input_arg):
             case "geo":
                 return _env_geoPairing()
             case "stat":
-                return _stat_test()
+                return _env_stat()
             case _:
                 pass
     return (ERROR_MESSAGE_SYS_EXIT_NO_MATCH, FAILED, None)
